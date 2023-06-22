@@ -1,0 +1,53 @@
+{
+  "name": "quik-invoice",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Quik Invoice",
+  "repository": "",
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "npm run dev",
+    "dev": "cross-env NODE_ENV=development vite",
+    "build": "cross-env NODE_ENV=production vite build && npx workbox generateSW workbox-config.js",
+    "build-capacitor-ios": "cross-env NODE_ENV=production vite build && npx cap copy ios",
+    "build-capacitor-android": "cross-env NODE_ENV=production vite build && npx cap copy android",
+    "postinstall": "cpy --flat ./node_modules/framework7-icons/fonts/*.* ./src/fonts/ && cpy --flat ./node_modules/material-icons/iconfont/*.* ./src/fonts/"
+  },
+  "browserslist": [
+    "IOS >= 15",
+    "Safari >= 15",
+    "last 5 Chrome versions",
+    "last 5 Firefox versions"
+  ],
+  "dependencies": {
+    "@capacitor/android": "^5.0.5",
+    "@capacitor/app": "^5.0.3",
+    "@capacitor/browser": "^5.0.3",
+    "@capacitor/core": "^5.0.5",
+    "@capacitor/ios": "^5.0.5",
+    "@capacitor/keyboard": "^5.0.4",
+    "@capacitor/splash-screen": "^5.0.4",
+    "@capacitor/status-bar": "^5.0.4",
+    "dom7": "^4.0.6",
+    "framework7": "^8.1.0",
+    "framework7-icons": "^5.0.5",
+    "framework7-svelte": "^8.1.0",
+    "material-icons": "^1.13.8",
+    "skeleton-elements": "^4.0.1",
+    "svelte": "^3.59.2",
+    "swiper": "^9.4.1"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^5.0.5",
+    "@sveltejs/vite-plugin-svelte": "^2.4.1",
+    "autoprefixer": "^10.4.14",
+    "cordova-res": "^0.15.4",
+    "cpy-cli": "^4.2.0",
+    "cross-env": "^7.0.3",
+    "postcss": "^8.4.24",
+    "postcss-preset-env": "^8.5.1",
+    "tailwindcss": "^3.3.2",
+    "vite": "^4.3.9",
+    "workbox-cli": "^6.6.0"
+  }
+}
