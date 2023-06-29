@@ -211,6 +211,14 @@
     print = {};
   }
 
+  async function shareApp() {
+    const data  = { title: 'Coexcus', url: "<url>" };
+    try {
+      await navigator.share(data);
+    }
+    catch (e) {}
+  }
+
  onMount(()=>{
     getSettings();
     invoices = getAllInvoices();
@@ -473,7 +481,6 @@
               >
               </ListInput>
           </List>
-<!--            <textarea rows="3"></textarea>-->
         </div>
       </Block>
       <Sheet class="add-item" style="height: 70vh" swipeToClose
@@ -575,7 +582,7 @@
     </Page>
   </Popup>
   <Popup class="demo-popup" opened={openPrintInvoice} onPopupClosed={() => (openPrintInvoice = false)} tabletFullscreen>
-    <Page>
+    <Page class="print:bg-white">
       <Navbar class="print:hidden">
         <NavLeft>
             <Link popupClose>Close</Link>
@@ -592,7 +599,7 @@
       </Navbar>
       <Block>
         <div class="w-full flex flex-col justify-between items-center">
-          <h1 class="w-full font-bold text-md flex gap-1 items-center">
+          <h1 class="w-full font-bold text-md flex gap-1 items-center print:text-xl">
             {#if $SETTINGS.businessLogo}
               <img src={$SETTINGS.businessLogo} alt={$SETTINGS.businessName + ' Logo'} class="w-8 h-8 rounded-full"/>
             {/if}
@@ -603,53 +610,74 @@
           <hr/>
         </div>
         <div class="flex justify-between items-center">
-          <h1 class="font-bold text-md">
+          <h1 class="font-bold text-md print:text-xl">
             Invoice No:
           </h1>
-          <div>
+          <div class="print:text-xl">
             {print?.id}
           </div>
         </div>
         <div class="flex justify-between items-center">
-          <h1 class="font-bold text-md">
+          <h1 class="font-bold text-md print:text-xl">
             Date
           </h1>
-          <div>
+          <div class="print:text-xl">
             {print?.date}
           </div>
         </div>
         <div class="flex justify-between items-center">
-          <h1 class="font-bold text-md">
+          <h1 class="font-bold text-md print:text-xl">
             Bill To
           </h1>
-          <div>
+          <div class="print:text-xl">
             {print?.billTo}
           </div>
         </div>
       </Block>
       <Block>
         <div class="data-table data-table-init">
-          <div class="card-content" style="padding-bottom: 4rem">
-              <table>
+          <div class="card-content" style="padding-bottom: 2rem">
+              <table class="table-auto">
                 <thead>
-                <tr>
-                  <th class="label-cell"><b>Description</b></th>
-                  <th class="numeric-cell"><b>Quantity/Price</b></th>
-                  <th class="numeric-cell"><b>Total</b></th>
+                <tr class="bg-gray-50">
+                  <th class="label-cell"><b class="print:text-lg">Description</b></th>
+<!--                  <th class="numeric-cell print:hidden"><b>Quantity/Price</b></th>-->
+
+                  <th class="numeric-cell"><b class="print:text-lg">Quantity</b></th>
+                  <th class="numeric-cell"><b class="print:text-lg">Price</b></th>
+
+                  <th class="numeric-cell"><b class="print:text-lg">Total</b></th>
                 </tr>
                 </thead>
                 <tbody>
                 {#if print?.items}
                   {#each print.items as item}
                     <tr>
-                      <td class="label-cell whitespace-nowrap">{item.itemDescription}</td>
-                      <td class="numeric-cell">{item.quantity} x {formatCurrency(item.unitPrice)}</td>
-                      <td class="numeric-cell">{print?.currency + formatCurrency(item.quantity * item.unitPrice)}</td>
+                      <td class="label-cell"><p class="print:text-lg">{item.itemDescription}</p></td>
+<!--                      <td class="numeric-cell print:hidden"><p>{item.quantity} * {formatCurrency(item.unitPrice)}</p></td>-->
+
+                      <td class="numeric-cell"><p class="print:text-lg">{item.quantity}</p></td>
+                      <td class="numeric-cell"><p class="print:text-lg">{formatCurrency(item.unitPrice)}</p></td>
+
+                      <td class="numeric-cell"><p class="print:text-lg">{print?.currency + formatCurrency(item.quantity * item.unitPrice)}</p></td>
                     </tr>
                   {/each}
                 {/if}
-
                 </tbody>
+                <tfoot>
+                <tr class="border-t-2 print:mt-3">
+                  <td></td>
+                  <td></td>
+                  <td class="label-cell"><b class="print:text-lg font-bold">Total</b></td>
+                  <td class="numeric-cell"><b class="print:text-lg">{print?.currency + formatCurrency(print?.total)}</b></td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td class="label-cell whitespace-nowrap"><b class="print:text-lg font-bold">Grand Total(+VAT)</b></td>
+                  <td class="numeric-cell"><b class="print:text-lg">{print?.currency + formatCurrency(print?.grandTotal)}</b></td>
+                </tr>
+                </tfoot>
               </table>
           </div>
         </div>
@@ -657,10 +685,10 @@
       {#if print?.memo !== ""}
       <Block>
         <div class="">
-          <h1 class="font-bold text-md">
+          <h1 class="font-bold text-md print:text-xl">
             Memo
           </h1>
-          <div class="text-sm">
+          <div class="text-sm print:text-lg">
             {print?.memo}
           </div>
         </div>
