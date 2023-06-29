@@ -137,6 +137,11 @@
       billTo: "",
       items: [],
       total: 0,
+      grandTotal: 0,
+      timeStamp: null,
+      currency: null,
+      vat: null,
+      memo:""
     };
   }
 
@@ -461,7 +466,7 @@
         <div class="margin-top">
           <Button
                   on:click={()=> newItemSheetOpened = true }
-                  class="bg-transparent border border-blue-600 w-full py-5 flex item-center text-blue-600 hover:bg-blue-300 focus:bg-blue-300 capitalize">
+                  class="bg-transparent border border-blue-600 w-full py-5 flex item-center text-blue-600 hover:bg-blue-50 focus:bg-blue-50 capitalize">
             + Add Item
           </Button>
         </div>
