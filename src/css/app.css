@@ -2,7 +2,3 @@
 @tailwind components;
 @tailwind utilities;
 
-
-.fab-text{
-    text-transform: capitalize !important;
-}
