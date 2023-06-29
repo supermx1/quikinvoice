@@ -99,7 +99,7 @@
   function newInvoice() {
     const rand = Math.floor(Math.random() * 10000);
     const currDate = date();
-    record.id = `QCKINV-${rand}${getRandomLetter().toUpperCase()}`;
+    record.id = `QKINV-${rand}${getRandomLetter().toUpperCase()}`;
     record.date = currDate;
     openNewInvoice = true;
     record.timeStamp = new Date().getTime();
@@ -196,18 +196,33 @@
     object[property] = object[property].toUpperCase();
   }
 
+  let print;
+  function printInvoice(index) {
+    print = invoices[index];
+    openPrintInvoice = true;
+  }
+
+  function printer(){
+    setTimeout(() => window.print(), 500);
+  }
+
+  function closePrintInvoice() {
+    openPrintInvoice = false;
+    print = {};
+  }
+
  onMount(()=>{
     getSettings();
     invoices = getAllInvoices();
     clearInvoice();
  })
 </script>
-<Page name="home">
+<Page name="home" class="print:hidden">
   <!-- Top Navbar -->
   <Navbar >
     <NavLeft>
       {#if $SETTINGS.businessLogo}
-        <img src={$SETTINGS.businessLogo} alt="" class="w-8 h-8 rounded-full"/>
+        <img src={$SETTINGS.businessLogo} alt={$SETTINGS.businessName + ' Logo'} class="w-8 h-8 rounded-full"/>
       {/if}
       <NavTitle>{$SETTINGS.businessName}</NavTitle>
     </NavLeft>
@@ -240,6 +255,7 @@
   >
     {#each invoices as invoice, i}
     <ListItem swipeout
+              on:click={()=> printInvoice(i)}
             link="#"
             title="{invoice.id}"
             after="{invoice.date}"
@@ -304,6 +320,9 @@
           >
             <option value="₦">Naira</option>
             <option value="$">US Dollar</option>
+            <option value="£">Pound Sterling</option>
+            <option value="€">Euro</option>
+            <option value="₹">Rupee</option>
           </ListInput>
           <ListInput
                   bind:value={settings.vat}
@@ -367,7 +386,7 @@
       </Card>
       <Block>
         <div class="flex justify-between items-center">
-          <h1 class="font-bold text-xl">
+          <h1 class="font-bold text-lg">
             Invoice
           </h1>
           <div>
@@ -375,7 +394,7 @@
           </div>
         </div>
         <div class="flex justify-between items-center">
-          <h1 class="font-bold text-xl">
+          <h1 class="font-bold text-lg">
             Date
           </h1>
           <div>
@@ -383,7 +402,7 @@
           </div>
         </div>
         <div class="flex justify-between items-center">
-          <h1 class="font-bold text-xl">
+          <h1 class="font-bold text-lg">
             Bill To
           </h1>
           <div>
@@ -402,16 +421,16 @@
       <Block>
         <div class="data-table data-table-init">
           <div class="card-content" style="padding-bottom: 4rem">
-            {#if record.items.length > 0}
             <table>
-              <thead>
-              <tr>
+              <thead class="rounded-lg">
+              <tr class="bg-gray-50">
                 <th class="label-cell"><b>Description</b></th>
                 <th class="numeric-cell"><b>Quantity/Price</b></th>
                 <th class="numeric-cell"><b>Total</b></th>
                 <th></th>
               </tr>
               </thead>
+              {#if record.items.length > 0}
               <tbody>
               {#each record.items as item,i}
                 <tr>
@@ -426,10 +445,9 @@
                   </td>
                 </tr>
               {/each}
-
               </tbody>
+              {/if}
             </table>
-            {/if}
           </div>
         </div>
         <div class="margin-top">
@@ -438,6 +456,24 @@
                   class="bg-transparent border border-blue-600 w-full py-5 flex item-center text-blue-600 hover:bg-blue-300 focus:bg-blue-300 capitalize">
             + Add Item
           </Button>
+        </div>
+      </Block>
+      <Block>
+        <div class="">
+          <h1 class="font-bold text-lg">
+            Memo
+          </h1>
+          <List strongIos class="bg-transparent !m-0">
+              <ListInput
+                      bind:value={record.memo}
+                      outline
+                      label="Memo"
+                      type="textarea"
+                      placeholder="Enter Description"
+              >
+              </ListInput>
+          </List>
+<!--            <textarea rows="3"></textarea>-->
         </div>
       </Block>
       <Sheet class="add-item" style="height: 70vh" swipeToClose
@@ -538,98 +574,98 @@
       </Sheet>
     </Page>
   </Popup>
-  <Popup class="demo-popup" opened={openPrintInvoice} onPopupClosed={() => (openPrintInvoice = false)}>
+  <Popup class="demo-popup" opened={openPrintInvoice} onPopupClosed={() => (openPrintInvoice = false)} tabletFullscreen>
     <Page>
-      <Navbar>
+      <Navbar class="print:hidden">
         <NavLeft>
             <Link popupClose>Close</Link>
         </NavLeft>
-        <NavTitle>New Invoice</NavTitle>
+        <NavTitle>Print {print?.id}</NavTitle>
         <NavRight>
-          <Button popupClose
-                  disabled={record.billTo === '' || record.items.length === 0}
-                  on:click={()=> saveInvoice()}
+          <Button
+                  on:click={()=> printer()}
                   class="bg-blue-600 w-full py-4 flex item-center !text-white hover:bg-blue-700 focus:bg-blue-700 capitalize">
-            <Icon f7="checkmark" size="14px" class="mr-2" />
-            Save
+            <Icon f7="printer" size="14px" class="mr-2" />
+            Print
           </Button>
         </NavRight>
       </Navbar>
       <Block>
+        <div class="w-full flex flex-col justify-between items-center">
+          <h1 class="w-full font-bold text-md flex gap-1 items-center">
+            {#if $SETTINGS.businessLogo}
+              <img src={$SETTINGS.businessLogo} alt={$SETTINGS.businessName + ' Logo'} class="w-8 h-8 rounded-full"/>
+            {/if}
+            {$SETTINGS.businessName}
+          </h1>
+        </div>
+        <div class="my-4">
+          <hr/>
+        </div>
         <div class="flex justify-between items-center">
-          <h1 class="font-bold text-xl">
-            Invoice
+          <h1 class="font-bold text-md">
+            Invoice No:
           </h1>
           <div>
-            {record.id}
+            {print?.id}
           </div>
         </div>
         <div class="flex justify-between items-center">
-          <h1 class="font-bold text-xl">
+          <h1 class="font-bold text-md">
             Date
           </h1>
           <div>
-            {date()}
+            {print?.date}
           </div>
         </div>
         <div class="flex justify-between items-center">
-          <h1 class="font-bold text-xl">
+          <h1 class="font-bold text-md">
             Bill To
           </h1>
           <div>
-            {#if record.billTo !== ''}
-              <span class="text-black">
-                <a on:click={()=> addRecipientSheet = true} class="text-blue-600 hover:underline">
-                {record.billTo}
-                </a>
-              </span>
-            {:else }
-              <a on:click={()=> addRecipientSheet = true} class="text-blue-600 hover:underline">Add Recipient</a>
-            {/if}
+            {print?.billTo}
           </div>
         </div>
       </Block>
       <Block>
         <div class="data-table data-table-init">
           <div class="card-content" style="padding-bottom: 4rem">
-            {#if record.items.length > 0}
               <table>
                 <thead>
                 <tr>
                   <th class="label-cell"><b>Description</b></th>
                   <th class="numeric-cell"><b>Quantity/Price</b></th>
                   <th class="numeric-cell"><b>Total</b></th>
-                  <th></th>
                 </tr>
                 </thead>
                 <tbody>
-                {#each record.items as item,i}
-                  <tr>
-                    <td class="label-cell whitespace-nowrap">{item.itemDescription}</td>
-                    <td class="numeric-cell">{item.quantity} x {formatCurrency(item.unitPrice)}</td>
-                    <td class="numeric-cell">{$SETTINGS.currency + formatCurrency(item.quantity * item.unitPrice)}</td>
-                    <td class="actions-cell">
-                      <a class="link icon-only" on:click={()=> removeItem(i)}>
-                        <i class="icon f7-icons if-not-md text-red-500">trash</i>
-                        <i class="icon material-icons md-only text-red-500">delete</i>
-                      </a>
-                    </td>
-                  </tr>
-                {/each}
+                {#if print?.items}
+                  {#each print.items as item}
+                    <tr>
+                      <td class="label-cell whitespace-nowrap">{item.itemDescription}</td>
+                      <td class="numeric-cell">{item.quantity} x {formatCurrency(item.unitPrice)}</td>
+                      <td class="numeric-cell">{print?.currency + formatCurrency(item.quantity * item.unitPrice)}</td>
+                    </tr>
+                  {/each}
+                {/if}
 
                 </tbody>
               </table>
-            {/if}
           </div>
         </div>
-        <div class="margin-top">
-          <Button
-                  on:click={()=> newItemSheetOpened = true }
-                  class="bg-transparent border border-blue-600 w-full py-5 flex item-center text-blue-600 hover:bg-blue-300 focus:bg-blue-300 capitalize">
-            + Add Item
-          </Button>
+      </Block>
+      {#if print?.memo !== ""}
+      <Block>
+        <div class="">
+          <h1 class="font-bold text-md">
+            Memo
+          </h1>
+          <div class="text-sm">
+            {print?.memo}
+          </div>
         </div>
       </Block>
+        {/if}
     </Page>
   </Popup>
 </Page>
