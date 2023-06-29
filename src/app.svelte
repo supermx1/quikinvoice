@@ -22,15 +22,8 @@
   let f7params = {
     name: 'Quik Invoice', // App name
     theme: 'ios', // md or ios
-
-
-
-
     id: 'io.framework7.quikinvoice', // App bundle ID
-    // App store
-    // App routes
     routes: routes,
-
     // Register service worker (only on production build)
     serviceWorker: process.env.NODE_ENV ==='production' ? {
       path: '/service-worker.js',
