@@ -20,6 +20,7 @@
   import {formatCurrency} from "../js/utils.js";
   import {SETTINGS, CLEAR_SETTINGS, UPDATE_SETTINGS, defaultSettings} from "../js/store";
   import {onMount} from "svelte";
+  import Alert from "../components/Alert.svelte";
 
   let toastTop;
   let settingsSheetOpened = false;
@@ -237,7 +238,7 @@
       {#if $SETTINGS.businessLogo}
         <img src={$SETTINGS.businessLogo} alt={$SETTINGS.businessName + ' Logo'} class="w-8 h-8 rounded-full"/>
       {/if}
-      <NavTitle>{$SETTINGS.businessName}</NavTitle>
+      <NavTitle><p class="text-ellipsis overflow-hidden max-w-[17rem]">{$SETTINGS.businessName}</p></NavTitle>
     </NavLeft>
 
     <NavRight>
@@ -259,6 +260,11 @@
       <div class="box-border text-lg px-4 py-4 leading-3 font-normal !capitalize">Create</div>
     </a>
   </div>
+  {#if $SETTINGS.businessName === "Quick Invoice" || $SETTINGS.businessName === ""}
+  <Block class="!my-2">
+    <Alert message={"Add your business information by clicking on the gear icon above."}/>
+  </Block>
+    {/if}
   <BlockTitle>
     Invoices
     <Badge>{noOfInvoices}</Badge>
@@ -397,6 +403,11 @@
           </h1>
         </CardContent>
       </Card>
+      {#if record.billTo === ""}
+        <Block class="!my-1">
+          <Alert message={"You must add a recipient before you can save an invoice."}/>
+        </Block>
+      {/if}
       <Block>
         <div class="flex justify-between items-center">
           <h1 class="font-bold text-lg">

@@ -21,7 +21,7 @@
   // Framework7 Parameters
   let f7params = {
     name: 'Quik Invoice', // App name
-    theme: 'ios', // md or ios
+    theme: 'auto', // md or ios
     id: 'io.framework7.quikinvoice', // App bundle ID
     routes: routes,
     // Register service worker (only on production build)
